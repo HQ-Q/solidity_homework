@@ -7,7 +7,7 @@ contract BinarySearch {
     function binarySearch(int[] memory arr, int target) public pure returns (int256) {
         // 处理空数组情况
         if (arr.length == 0) {
-            return -1;
+            return -1; 
         }
         
         int256 left = 0;
