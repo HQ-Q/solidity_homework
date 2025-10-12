@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.15;
+pragma solidity ^0.8.0;
 
 //银行接口
 interface IBank {
@@ -8,7 +8,7 @@ interface IBank {
 
     function withdraw(uint256 amount)external ;
 
-    function getBalance(address account)external view returns (uint256);
+    function getBalance()external view returns (uint256);
 }
 
 //实现银行接口
@@ -26,28 +26,30 @@ contract Bank is IBank{
         payable(msg.sender).transfer(amount);
     }
 
-    function getBalance(address account)external view returns (uint256){
-        return balances[account];
+    function getBalance()external view returns (uint256){
+        return balances[msg.sender];
     }
 }
 
 // 使用银行接口的合约
 
 contract UseBank {
-    IBank bank;
-    constructor(address bankAddress) {
-        bank = IBank(bankAddress);
+    function depositToBank(address bankAddress) external payable {
+        IBank bank = IBank(bankAddress);
+        bank.deposit{value: msg.value}();
     }
 
-    function deposit()external payable {
-        bank.deposit{value:msg.value}();
-    }
-
-    function withdraw(uint256 amount)external{
+    function withdrawFromBank(address bankAddress, uint256 amount) external {
+        IBank bank = IBank(bankAddress);
         bank.withdraw(amount);
     }
 
-    function getBalance(address account)external view returns (uint256){
-        return bank.getBalance(account);
+    function getBankBalance(address bankAddress) external view returns (uint256) {
+        IBank bank = IBank(bankAddress);
+        return bank.getBalance();
     }
+
+    receive() external payable { }
+
+    fallback() external payable { }
 }
