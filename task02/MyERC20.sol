@@ -1,4 +1,3 @@
-
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8;
 
@@ -15,16 +14,16 @@ contract MyERC20 {
     // 合约所有者
     address public owner;
 
-    //账户余额
+    // 账户余额
     mapping(address => uint256) private _balances;
 
-    //授权信息
+    // 授权信息
     mapping(address => mapping(address => uint256)) private _allowances;
 
-    //转账事件
+    // 转账事件
     event Transfer(address from, address to, uint256 amount);
 
-    //授权事件
+    // 授权事件
     event Approval(address owner, address spender, uint256 amount);
 
     constructor(
@@ -32,14 +31,14 @@ contract MyERC20 {
         string memory _symbol,
         uint256 _initialSupply
     ) {
-        totalSupply = _initialSupply * 10**uint256(decimals); //初始化总供应量
-        name = _name; //初始化代币名称
-        symbol = _symbol; //初始化代币符号
-        _balances[msg.sender] = totalSupply; //初始化合约所有者的余额
+        totalSupply = _initialSupply * 10**uint256(decimals); // 初始化总供应量（正确处理小数位）
+        name = _name;
+        symbol = _symbol;
+        _balances[msg.sender] = totalSupply; // 部署者获得初始代币
         owner = msg.sender;
     }
 
-    //转账函数
+    // 转账函数
     function transfer(address recipient, uint256 amount)
         public
         virtual
@@ -47,28 +46,27 @@ contract MyERC20 {
     {
         require(recipient != address(0), "Invalid recipient address");
         require(_balances[msg.sender] >= amount, "Insufficient balance");
-        require((_balances[recipient] + amount) > amount, "Overflow");
+        
         _balances[msg.sender] -= amount;
         _balances[recipient] += amount;
         emit Transfer(msg.sender, recipient, amount);
         return true;
     }
 
-    //授权
-    function approval(address spender, uint256 amount)public returns(bool){
-        require(address(0)!=spender,"Invaild address");
+    // 授权函数名应为approve（标准ERC20）
+    function approve(address spender, uint256 amount) public returns (bool) {
+        require(spender != address(0), "Invalid address");
         _allowances[msg.sender][spender] = amount;
         emit Approval(msg.sender, spender, amount);
         return true;
     }
 
-
-    //授权转账
-    function transferFrom(address from,address to,uint256 amount)public returns(bool){
-        require(from != address(0), "Invaild address");
-        require(to != address(0), "Invaild address");
-        require(_balances[from] >= amount, "insufficient balance");
-        require(_allowances[from][msg.sender] >= amount, "allowance exceeded");
+    // 授权转账
+    function transferFrom(address from, address to, uint256 amount) public returns (bool) {
+        require(from != address(0), "Invalid address");
+        require(to != address(0), "Invalid address");
+        require(_balances[from] >= amount, "Insufficient balance");
+        require(_allowances[from][msg.sender] >= amount, "Allowance exceeded");
         
         _balances[from] -= amount;
         _balances[to] += amount;
@@ -79,23 +77,20 @@ contract MyERC20 {
 
     /**
      * @dev 增发代币功能，仅所有者可调用
-     * @param to 接收增发代币的地址
-     * @param amount 增发数量
+     * 修复：添加小数位处理（amount需传入实际数量，函数内部自动乘以10^decimals）
      */
     function mint(address to, uint256 amount) public {
-        require(msg.sender == owner, "only owner can mint");
-        require(to != address(0), "Invaild address");
+        require(msg.sender == owner, "Only owner can mint");
+        require(to != address(0), "Invalid address");
         
-        totalSupply += amount;
-        _balances[to] += amount;
-        emit Transfer(address(0), to, amount);
+        uint256 mintAmount = amount * 10**uint256(decimals); // 处理小数位
+        totalSupply += mintAmount;
+        _balances[to] += mintAmount;
+        emit Transfer(address(0), to, mintAmount);
     }
 
-
-    //查询账户余额
-    function balancesOf(address from)public view returns(uint256){
-        return _balances[from];
+    // 余额查询函数名应为balanceOf（标准ERC20）
+    function balanceOf(address account) public view returns (uint256) {
+        return _balances[account];
     }
-
-
 }
