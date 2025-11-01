@@ -1,0 +1,20 @@
+{
+  "address": "0xB7f8BC63BbcaD18155201308C8f3540b07f84F5e",
+  "abi": [
+    "event AuctionCreated(address indexed,uint256 indexed,address indexed,uint256,uint256,uint256)",
+    "event BidPlaced(uint256 indexed,address indexed,uint256)",
+    "event FundsClaimed(uint256 indexed,address indexed,uint256)",
+    "event Initialized(uint8)",
+    "event NFTClaimed(uint256 indexed,address indexed,uint256)",
+    "event NFTReclaimed(uint256 indexed,address indexed,uint256)",
+    "event ReceivedEth(address indexed,uint256)",
+    "function claimFunds(uint256)",
+    "function claimNFT(uint256)",
+    "function createAuction(address,uint256,uint256,uint256,uint256) returns (uint256)",
+    "function initialize()",
+    "function placeBid(uint256) payable",
+    "function reclaimNFT(uint256)",
+    "receive() payable"
+  ],
+  "numDeployments": 2
+}
