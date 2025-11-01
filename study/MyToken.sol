@@ -6,8 +6,8 @@ contract MyToken is ERC20{
 
 
     constructor() ERC20("MyToken", "MTK") {
-        // _mint(msg.sender, 1000000 * 10 ** decimals());
-        _mint(msg.sender, 1000000);
+         _mint(msg.sender, 1000000 * 10 ** decimals());
+        //_mint(msg.sender, 1000000);
     }
 
     
