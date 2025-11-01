@@ -30,3 +30,30 @@ go.work.sum
 # Editor/IDE
 # .idea/
 # .vscode/
+
+
+node_modules
+.env
+
+./node_modules
+./.env
+./deployments
+
+# Hardhat files
+/cache
+/artifacts
+./cache
+./artifacts
+
+
+# TypeChain files
+/typechain
+/typechain-types
+
+# solidity-coverage files
+/coverage
+/coverage.json
+
+# Hardhat Ignition default folder for deployments against a local node
+ignition/deployments/chain-31337
+
