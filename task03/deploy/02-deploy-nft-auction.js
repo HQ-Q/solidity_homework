@@ -9,6 +9,7 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
     console.log("020202---Deploying NFTAuction...");
     // 通过代理合约部署
     const nftAuctionProxy = await upgrades.deployProxy(NFTAuction, [], {
+        kind: 'uups',
         initializer: 'initialize',
     });
 
