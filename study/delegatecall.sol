@@ -1,32 +1,41 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8;
-//0xDA0bab807633f07f013f94DD0E6A4F96F8742B53
-contract C {
-    uint public num;
-    address public sender;
+pragma solidity ^0.8.12;
 
-    function setVars(uint256 _num) public payable {
-        num = _num;
+contract B{
+
+    uint256 public x;
+    address public sender;
+    uint256 public value;
+    bytes public data;
+
+    function setVars(uint256 _num)external payable {
+        x = _num;
         sender = msg.sender;
+        value = msg.value;
+        data = msg.data;
     }
 }
-contract B {
-    uint public num;
+
+
+contract A{
+    uint256 public x;
     address public sender;
+    uint256 public value;
+    bytes public data;
 
-    event callLog(address addr,bool success,bytes data);
-    event delegatecallLog(address addr,bool success,bytes data);
-    function callSetVars(address addr, uint256 _num) external payable {
-        (bool success, bytes memory data) = addr.call(
+    function setVars(address _contractAddress,uint256 _num)public  payable returns (bool){
+      (bool success,)=  _contractAddress.delegatecall(
             abi.encodeWithSignature("setVars(uint256)", _num)
         );
-        emit callLog(addr,success,data);
+       return success;
     }
 
-    function delegatecallSetVars(address addr, uint _num) external payable {
-        (bool success, bytes memory data) = addr.delegatecall(
+    function callSetVars(address _contractAddress,uint256 _num)public  payable returns (bool){
+        (bool success,)=  _contractAddress.call{value:msg.value}(
             abi.encodeWithSignature("setVars(uint256)", _num)
         );
-        emit delegatecallLog(addr,success,data);
+       return success;
     }
+
+
 }
