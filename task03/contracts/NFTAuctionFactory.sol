@@ -41,16 +41,9 @@ contract NftAuctionFactory {
         implementation = _implementation;
     }
 
-    // 部署并初始化 proxy，转移 proxy 所有权给调用者，返回 proxy 地址
-    function createAuction(
-        address _nftContract,
-        uint256 _nftTokenId,
-        uint256 _startTime,
-        uint256 _endTime,
-        uint256 _startPrice
-    ) public {
+    // 部署并初始化 proxy，转移 proxy 所有权给调用者，返回 proxy 地址 创建拍卖实例
+    function createAuction() public returns (address) {
         require(implementation != address(0), "implementation not set");
-
         // 在构造 proxy 时把初始化数据传入，避免初始化窗口
         bytes memory initData = abi.encodeWithSelector(
             NFTAuction.initialize.selector
@@ -61,17 +54,9 @@ contract NftAuctionFactory {
         // 初始化后，factory 作为 beacon 的 deployer/owner 应该能调用 transferOwnership
         // 把 proxy 的 Ownable 权限转给调用者，方便用户管理自己的拍卖实例（注意：Beacon 控制实现的升级）
         auction.transferOwnership(msg.sender);
-
         auctions.push(address(proxy));
-
-        auction.createAuction(
-            _nftContract,
-            _nftTokenId,
-            _startTime,
-            _endTime,
-            _startPrice
-        );
         emit AuctionDeployed(address(proxy));
+        return address(proxy);
     }
 
     function getAuctions() public view returns (address[] memory) {
